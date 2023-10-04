@@ -5,7 +5,7 @@ import character
 
 
 class GameMode:
-    NumberOfCharacterEachTeam = 1000
+    NumberOfCharacterEachTeam = 5
     GenerationsToAcceptConvergence = 10000
 
     CurrentGeneration = 0
@@ -36,8 +36,7 @@ class GameMode:
 
     def GetBestFiveCharacters(self):
         # Sorting cars by score
-        AllCharacters = self.BlueCharacters
-        AllCharacters.append(self.RedCharacters)
+        AllCharacters = self.BlueCharacters + self.RedCharacters
         AllCharacters.sort(key=lambda x: x.Rewards, reverse=True)
         self.BestCharactersInTurn = AllCharacters[:5]
         if len(self.BestCharactersInTurn) > 0:

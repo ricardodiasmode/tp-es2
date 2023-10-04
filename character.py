@@ -15,13 +15,14 @@ class Character:
     Dna = []
     Rewards = 0
     HasKnife = False
+    LogBelow = False
     BlueTeamMember = False
 
     def __init__(self, location, game_mode, blue_team):
         self.CurrentLocation = location
         self.GameMode = game_mode
-        self.UpdateImage()
         self.BlueTeamMember = blue_team
+        self.UpdateImage()
         # initializing neural network
         self.Brain = neuralNetwork.NeuralNetwork()
         self.Dna = []
@@ -66,6 +67,9 @@ class Character:
     def MoveDown(self):
         self.Move((0, 64))
 
+    def MoveDown(self):
+        self.Move((0, 64))
+
     def Move(self, position):
         LocationToGo = (self.CurrentLocation[0] + position[0], self.CurrentLocation[1] + position[1])
 
@@ -103,6 +107,10 @@ class Character:
             self.MoveUp()
         elif action_index == 3:
             self.MoveDown()
+        elif action_index == 4:
+            self.CraftKnife()
+        elif action_index == 5:
+            self.KillEnemy()
         else:
             #  Do nothing
             self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)

@@ -37,7 +37,7 @@ while GameMode.GameIsRunning:
             GameMode.RedCharacters[i].Brain.Think(GameMode.RedCharacters[i], GameMode)
             GameMode.RedCharacters[i].React()
             CurrentAliveCharacters += 1
-    print("Turn: " + str(GameMode.CurrentTurn) + " | Alive cars: " + CurrentAliveCharacters.__str__())
+    print("Turn: " + str(GameMode.CurrentTurn) + " | Alive characters: " + CurrentAliveCharacters.__str__())
 
     if ShouldDrawInfo:
         GameMode.DrawInfo()  # This slow down the game a lot

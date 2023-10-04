@@ -7,20 +7,26 @@ from layer import Layer
 
 INITIAL_WEIGHT_RATE = 1.0
 BIAS = 1
-AMOUNT_ENTRY_NEURON = 2 + BIAS
-AMOUNT_HIDDEN_NEURON = [1 + BIAS]
-AMOUNT_OUT_NEURON = 3
+AMOUNT_ENTRY_NEURON = 6 + BIAS
+AMOUNT_HIDDEN_NEURON = [2 + BIAS]
+AMOUNT_OUT_NEURON = 4
 
 
 def relu(x):
     return max(0, x)
 
 
-def GetEntryParams(car, gamemode):
-    XDist, HasLog = utils.GetFirstGapDeltaLocation(car.CurrentLocation, gamemode.CurrentBackground)
+def GetEntryParams(character, gamemode):
+    (LogXDist, LogYDist) = utils.GetClosestLogDist(character.CurrentLocation, gamemode.CurrentBackground)
+    (EnemyXDist, EnemyYDist) = utils.GetClosestEnemyDist(character.CurrentLocation, character.BlueTeamMember, gamemode)
     return [
-        XDist > 0,
-        XDist == 0
+        LogXDist > 0,
+        LogXDist == 0,
+        LogYDist > 0,
+        LogYDist == 0,
+        character.HasKnife,
+        -64 > EnemyXDist > 64,
+        -64 > EnemyYDist > 64,
     ]
 
 
@@ -55,13 +61,13 @@ class NeuralNetwork:
                 self.OutLayer.Neurons[j].Weights.append(
                     random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
 
-    def Think(self, car, gamemode):
-        self.FeedEntryLayer(car, gamemode)
+    def Think(self, character, gamemode):
+        self.FeedEntryLayer(character, gamemode)
         self.CalculateWeights()
         self.LastCalculatedOutput = self.GetOutput()
 
-    def FeedEntryLayer(self, car, gamemode):
-        EntryParams = GetEntryParams(car, gamemode)
+    def FeedEntryLayer(self, character, gamemode):
+        EntryParams = GetEntryParams(character, gamemode)
         for i in range(len(self.EntryLayer.Neurons) - BIAS):
             self.EntryLayer.Neurons[i].OutValue = int(EntryParams[i])
 
