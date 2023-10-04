@@ -2,8 +2,6 @@ import time
 import pygame
 import gamemode
 
-# LINK PARA O VÍDEO NO YOUTUBE: https://youtu.be/RVlLLstpe1Q
-
 # Basic game setups
 pygame.init()
 Clock = pygame.time.Clock()
@@ -28,19 +26,18 @@ while GameMode.GameIsRunning:
                 if SleepTime < 0:
                     SleepTime = 0
 
-    GameMode.CurrentBackground.DrawBackground()
-
     # Game loop
-    CurrentAliveCars = 0
-    for CurrentCar in GameMode.Cars:
-        if GameMode.CurrentBackground.SquareDict[CurrentCar.CurrentLocation] == "LOG":
-            CurrentCar.Die()
-        if CurrentCar.IsDead:
-            continue
-        CurrentCar.Brain.Think(CurrentCar, GameMode)
-        CurrentCar.React()
-        CurrentAliveCars += 1
-    print("Turn: " + str(GameMode.CurrentTurn) + " | Alive cars: " + CurrentAliveCars.__str__())
+    CurrentAliveCharacters = 0
+    for i in range(len(GameMode.BlueCharacters)):
+        if not GameMode.BlueCharacters[i].IsDead:
+            GameMode.BlueCharacters[i].Brain.Think(GameMode.BlueCharacters[i], GameMode)
+            GameMode.BlueCharacters[i].React()
+            CurrentAliveCharacters += 1
+        if not GameMode.RedCharacters[i].IsDead:
+            GameMode.RedCharacters[i].Brain.Think(GameMode.RedCharacters[i], GameMode)
+            GameMode.RedCharacters[i].React()
+            CurrentAliveCharacters += 1
+    print("Turn: " + str(GameMode.CurrentTurn) + " | Alive cars: " + CurrentAliveCharacters.__str__())
 
     if ShouldDrawInfo:
         GameMode.DrawInfo()  # This slow down the game a lot

@@ -1,86 +1,88 @@
 import math
-
 import pygame
-
 import background
-import car
+import character
 
 
 class GameMode:
-    NumberOfCars = 1000
+    NumberOfCharacterEachTeam = 1000
     GenerationsToAcceptConvergence = 10000
 
     CurrentGeneration = 0
     GameIsRunning = True
-    Cars = []
+    BlueCharacters = []
+    RedCharacters = []
     CurrentBackground = None
     NumberOfMutations = 0
     CurrentTurn = 0
-    BestCarsInTurn = []
+    BestCharactersInTurn = []
 
-    NetworkConverged = False
-    GenerationsWithoutDnaChange = 0
     BestFitEver = -999
-    BestDnaEver = None
-    BestKillsEver = 0
 
     def __init__(self):
         self.ResetVariables()
 
     def ResetVariables(self):
-        self.Cars = []
+        self.BlueCharacters = []
+        self.RedCharacters = []
         self.CurrentBackground = None
         self.CurrentTurn = 0
 
     def ResetGame(self):
-        self.GetBestFiveCars()
+        if self.CurrentGeneration != 0:
+            self.GetBestFiveCharacters()
         self.InitNewGame()
-        self.ChangeCarsDna()
+        self.ChangeCharactersDna()
 
-    def GetBestFiveCars(self):
+    def GetBestFiveCharacters(self):
         # Sorting cars by score
-        self.Cars.sort(key=lambda x: x.Rewards, reverse=True)
-        self.BestCarsInTurn = self.Cars[:5]
-        if len(self.BestCarsInTurn) > 0:
-            if self.BestCarsInTurn[0].Rewards > self.BestFitEver:
-                self.BestFitEver = self.BestCarsInTurn[0].Rewards
+        AllCharacters = self.BlueCharacters
+        AllCharacters.append(self.RedCharacters)
+        AllCharacters.sort(key=lambda x: x.Rewards, reverse=True)
+        self.BestCharactersInTurn = AllCharacters[:5]
+        if len(self.BestCharactersInTurn) > 0:
+            if self.BestCharactersInTurn[0].Rewards > self.BestFitEver:
+                self.BestFitEver = self.BestCharactersInTurn[0].Rewards
 
     def InitNewGame(self):
         print("---------- Init generation: " + str(self.CurrentGeneration) + " ----------")
         self.ResetVariables()
         self.CurrentBackground = background.Background()
-        self.CreateCars()
+        self.CreateCharacters()
         self.CurrentGeneration += 1
 
-    def CreateCars(self):
+    def CreateCharacters(self):
         InitialLoc = (self.CurrentBackground.DisplayWidth / 2, self.CurrentBackground.DisplayHeight / 2)
 
-        for i in range(self.NumberOfCars):
-            self.Cars.append(car.Car(InitialLoc, self))
+        for i in range(self.NumberOfCharacterEachTeam):
+            self.BlueCharacters.append(character.Character(InitialLoc, self, True))
+            self.RedCharacters.append(character.Character(InitialLoc, self, False))
 
         if self.CurrentGeneration == 0:
-            self.NumberOfMutations = len(self.Cars[0].Dna)
+            self.NumberOfMutations = len(self.BlueCharacters[0].Dna)
 
-    def ChangeCarsDna(self):
-        if len(self.BestCarsInTurn) == 0:
+    def ChangeCharactersDna(self):
+        if len(self.BestCharactersInTurn) == 0:
             return
-        print("Best car score (round): " + str(self.BestCarsInTurn[0].Rewards))
-        print("Best car DNA(round): " + str(self.BestCarsInTurn[0].Dna))
-        self.CloneBestCars()
-        self.MutateCars()
+        print("Best car score (round): " + str(self.BestCharactersInTurn[0].Rewards))
+        print("Best car DNA(round): " + str(self.BestCharactersInTurn[0].Dna))
+        self.CloneBestCharacters()
+        self.MutateCharacters()
         self.NumberOfMutations *= 0.999
-        if self.NumberOfMutations < len(self.Cars[0].Dna) / 3:
-            self.NumberOfMutations = len(self.Cars[0].Dna) / 3
+        if self.NumberOfMutations < len(self.BlueCharacters[0].Dna) / 3:
+            self.NumberOfMutations = len(self.BlueCharacters[0].Dna) / 3
         print("Mutating " + str(math.ceil(self.NumberOfMutations)) + " DNAs.")
 
-    def CloneBestCars(self):
-        for i in range(len(self.Cars)):
-            if i < len(self.BestCarsInTurn):
-                self.Cars[i].Dna = self.BestCarsInTurn[i].Dna
+    def CloneBestCharacters(self):
+        for i in range(len(self.BlueCharacters)):
+            if i < len(self.BestCharactersInTurn):
+                self.BlueCharacters[i].Dna = self.BestCharactersInTurn[i].Dna
+                self.RedCharacters[i].Dna = self.BestCharactersInTurn[i].Dna
 
-    def MutateCars(self):
-        for i in range(len(self.BestCarsInTurn), len(self.Cars)):
-            self.Cars[i].MutateDna(self.NumberOfMutations)
+    def MutateCharacters(self):
+        for i in range(len(self.BestCharactersInTurn), len(self.BlueCharacters)):
+            self.BlueCharacters[i].MutateDna(self.NumberOfMutations)
+            self.RedCharacters[i].MutateDna(self.NumberOfMutations)
 
     def OnTurnEnd(self):
         if self.CheckIfGameOver():
@@ -90,8 +92,12 @@ class GameMode:
         self.CurrentTurn += 1
 
     def CheckIfGameOver(self):
-        for CurrentCar in self.Cars:
-            if CurrentCar.IsDead:
+        for CurrentCharacter in self.BlueCharacters:
+            if CurrentCharacter.IsDead:
+                continue
+            return False
+        for CurrentCharacter in self.RedCharacters:
+            if CurrentCharacter.IsDead:
                 continue
             return False
         return True
@@ -101,7 +107,7 @@ class GameMode:
             return
 
         Font = pygame.font.SysFont("comicsansms", 13)
-        BestFitText = Font.render("Best fitness (round): " + str(self.BestCarsInTurn[0].Rewards), True, (0, 0, 0))
+        BestFitText = Font.render("Best fitness (round): " + str(self.BestCharactersInTurn[0].Rewards), True, (0, 0, 0))
         BestFitEverText = Font.render("Best fitness (ever): " + str(self.BestFitEver), True, (0, 0, 0))
         self.CurrentBackground.Screen.blit(BestFitEverText, (initial_x_loc, initial_y_loc))
         self.CurrentBackground.Screen.blit(BestFitText, (initial_x_loc, initial_y_loc + 15))
@@ -114,10 +120,10 @@ class GameMode:
     def DrawNeuralNet(self, initial_x_loc, initial_y_loc):
         BIAS = 1
         EachNeuronOffset = 20
-        if self.BestCarsInTurn[0] is None:
+        if self.BestCharactersInTurn[0] is None:
             return
 
-        BestCharacterBrain = self.BestCarsInTurn[0].Brain
+        BestCharacterBrain = self.BestCharactersInTurn[0].Brain
 
         # Drawing first layer texts
         Font = pygame.font.SysFont("comicsansms", 14)
@@ -193,19 +199,12 @@ class GameMode:
                                      (initial_x_loc + 100, initial_y_loc + i * EachNeuronOffset),
                                      (initial_x_loc + 150, initial_y_loc + j * EachNeuronOffset), 1)
 
-    def DrawBestCharacterIndex(self, initial_x_loc, initial_y_loc):
-        BestCharacterIndex = self.Cars.index(self.BestCarsInTurn[0])
-        Font = pygame.font.SysFont("comicsansms", 14)
-        CurrentKillsText = Font.render("Best Character Index: " + str(BestCharacterIndex), True, (0, 0, 0))
-        self.CurrentBackground.Screen.blit(CurrentKillsText, (initial_x_loc, initial_y_loc))
-
     def DrawInfo(self):
         InitialYLoc = 0
         InitialXLoc = self.CurrentBackground.DisplayWidth
         pygame.draw.rect(self.CurrentBackground.Screen, (255, 255, 255), (InitialXLoc, InitialYLoc, 275, 300))
 
         self.DrawCurrentGeneration(InitialXLoc, InitialYLoc)
-        self.GetBestFiveCars()
+        self.GetBestFiveCharacters()
         self.DrawBestFitness(InitialXLoc, InitialYLoc + 15)
-        self.DrawBestCharacterIndex(InitialXLoc, InitialYLoc + 45)
-        self.DrawNeuralNet(InitialXLoc, InitialYLoc + 105)
+        self.DrawNeuralNet(InitialXLoc, InitialYLoc + 60)

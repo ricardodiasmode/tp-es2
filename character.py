@@ -6,7 +6,7 @@ import neuralNetwork
 BASE_REWARD = 100
 
 
-class Car:
+class Character:
     CurrentLocation = (0, 0)
     PlayerImage = None
     GameMode = None
@@ -14,11 +14,14 @@ class Car:
     Brain = None
     Dna = []
     Rewards = 0
+    HasKnife = False
+    BlueTeamMember = False
 
-    def __init__(self, location, game_mode):
+    def __init__(self, location, game_mode, blue_team):
         self.CurrentLocation = location
         self.GameMode = game_mode
         self.UpdateImage()
+        self.BlueTeamMember = blue_team
         # initializing neural network
         self.Brain = neuralNetwork.NeuralNetwork()
         self.Dna = []
@@ -26,7 +29,19 @@ class Car:
             self.Dna.append((random.randint(0, 20000) / 10.0) - 1000.0)
 
     def UpdateImage(self):
-        self.PlayerImage = pygame.image.load("car.png")
+        # Updating image
+        if self.HasKnife:
+            if self.BlueTeamMember:
+                self.PlayerImage = pygame.image.load("img/BlueCharacterWithKnife.png")
+            else:
+                self.PlayerImage = pygame.image.load("img/RedCharacterWithKnife.png")
+        else:
+            if self.BlueTeamMember:
+                self.PlayerImage = pygame.image.load("img/BlueCharacter.png")
+            else:
+                self.PlayerImage = pygame.image.load("img/RedCharacter.png")
+
+        # Updating location
         ImageBelow = self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation]
         self.GameMode.CurrentBackground.Screen.blit(ImageBelow, self.CurrentLocation)
         self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
@@ -44,6 +59,12 @@ class Car:
 
     def MoveRight(self):
         self.Move((64, 0))
+
+    def MoveUp(self):
+        self.Move((0, -64))
+
+    def MoveDown(self):
+        self.Move((0, 64))
 
     def Move(self, position):
         LocationToGo = (self.CurrentLocation[0] + position[0], self.CurrentLocation[1] + position[1])
@@ -78,6 +99,10 @@ class Car:
             self.MoveLeft()
         elif action_index == 1:
             self.MoveRight()
+        elif action_index == 2:
+            self.MoveUp()
+        elif action_index == 3:
+            self.MoveDown()
         else:
             #  Do nothing
             self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
