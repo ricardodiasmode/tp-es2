@@ -3,6 +3,7 @@ import random
 import pygame
 import background
 import character
+import utils
 
 
 class GameMode:
@@ -119,6 +120,16 @@ class GameMode:
                 return True
         return False
 
+    def GetCharacterClose(self, IgnoredCharacter):
+        AllCharacters = self.BlueCharacters + self.RedCharacters
+        AllCharacters.remove(IgnoredCharacter)
+        for i in range(len(AllCharacters)):
+            ClosestDist = utils.GetClosestEnemyDist(IgnoredCharacter.CurrentLocation, IgnoredCharacter.BlueTeamMember, self)
+            if ClosestDist[0] == 0 and abs(ClosestDist[1]) == 64 or \
+                ClosestDist[0] == 64 and abs(ClosestDist[1]) == 0:
+                return AllCharacters[i]
+        return None
+
     def DrawBestFitness(self, initial_x_loc, initial_y_loc):
         if self.CurrentBackground.Screen is None:
             return
@@ -144,10 +155,20 @@ class GameMode:
 
         # Drawing first layer texts
         Font = pygame.font.SysFont("comicsansms", 14)
-        FirstNeuronText = Font.render("XDist", True, (0, 0, 0))
-        SecondNeuronText = Font.render("Equal", True, (0, 0, 0))
+        FirstNeuronText = Font.render("LogXDist > 0", True, (0, 0, 0))
+        SecondNeuronText = Font.render("LogXDist == 0", True, (0, 0, 0))
+        ThirdNeuronText = Font.render("LogYDist > 0", True, (0, 0, 0))
+        FouthNeuronText = Font.render("LogYDist == 0", True, (0, 0, 0))
+        FifthNeuronText = Font.render("HasKnife", True, (0, 0, 0))
+        SixthNeuronText = Font.render("-64 > EnemyXDist > 64", True, (0, 0, 0))
+        SeventhNeuronText = Font.render("-64 > EnemyYDist > 64", True, (0, 0, 0))
         self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc, initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(SecondNeuronText, (initial_x_loc, 20 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(ThirdNeuronText, (initial_x_loc, 40 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(FouthNeuronText, (initial_x_loc, 60 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(FifthNeuronText, (initial_x_loc, 80 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(SixthNeuronText, (initial_x_loc, 100 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(SeventhNeuronText, (initial_x_loc, 120 + initial_y_loc - 13))
 
         # Drawing first layer neurons
         for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):

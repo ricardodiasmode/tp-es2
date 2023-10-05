@@ -17,6 +17,7 @@ class Character:
     HasKnife = False
     LogBelow = False
     BlueTeamMember = False
+    Energy = 10
 
     def __init__(self, location, game_mode, blue_team):
         self.CurrentLocation = location
@@ -99,8 +100,13 @@ class Character:
                 number = (random.randint(0, 20000) / 10.0) - 1000.0 / 100.0
                 self.Dna[index] += self.Dna[index] + number
 
+    def CheckShouldDie(self):
+        if self.Energy == 0:
+            self.Die()
+
     def GetAction(self, action_index):
         self.Rewards += 1
+        self.Energy -= 1
         if action_index == 0:
             self.MoveLeft()
         elif action_index == 1:
@@ -116,3 +122,26 @@ class Character:
         else:
             #  Do nothing
             self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
+        self.CheckShouldDie()
+
+    def CraftKnife(self):
+        if self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation] != "LOG" or \
+                self.HasKnife:
+            return
+
+        self.Energy += 10
+        self.Rewards += 10
+
+        self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation] = "GRASS"
+        self.HasKnife = True
+        self.UpdateImage()
+
+    def KillEnemy(self):
+        if not self.HasKnife:
+            return
+        if self.GameMode.GetCharacterClose(self.CurrentLocation) is None:
+            return
+
+        self.GameMode.GetCharacterClose(self).Die()
+        self.Energy += 10
+        self.Rewards += 10

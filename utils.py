@@ -1,7 +1,5 @@
 import math
 
-import gamemode
-
 
 def GetClosestLogDist(character_loc, background):
     closest_log_index = 0
@@ -10,7 +8,8 @@ def GetClosestLogDist(character_loc, background):
         if closest_dist > DistanceBetweenLocations(background.LogLocations[i], character_loc):
             closest_dist = DistanceBetweenLocations(background.LogLocations[i], character_loc)
             closest_log_index = i
-    return background.LogLocations[closest_log_index]
+    found_loc = background.LogLocations[closest_log_index]
+    return (found_loc[0] - character_loc[0], found_loc[1] - character_loc[1])
 
 
 def GetClosestEnemyDist(character_loc, character_is_blue, game_mode):
@@ -25,7 +24,9 @@ def GetClosestEnemyDist(character_loc, character_is_blue, game_mode):
         if closest_dist > DistanceBetweenLocations(enemies[i].CurrentLocation, character_loc):
             closest_dist = DistanceBetweenLocations(enemies[i].CurrentLocation, character_loc)
             closest_enemy_index = i
-    return enemies[closest_enemy_index].CurrentLocation
+
+    found_loc = enemies[closest_enemy_index].CurrentLocation
+    return (found_loc[0] - character_loc[0], found_loc[1] - character_loc[1])
 
 
 def DistanceBetweenLocations(first_loc, second_loc):
