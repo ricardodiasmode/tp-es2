@@ -1,11 +1,12 @@
 import math
+import random
 import pygame
 import background
 import character
 
 
 class GameMode:
-    NumberOfCharacterEachTeam = 5
+    NumberOfCharacterEachTeam = 1
     GenerationsToAcceptConvergence = 10000
 
     CurrentGeneration = 0
@@ -50,11 +51,21 @@ class GameMode:
         self.CreateCharacters()
         self.CurrentGeneration += 1
 
-    def CreateCharacters(self):
-        InitialLoc = (self.CurrentBackground.DisplayWidth / 2, self.CurrentBackground.DisplayHeight / 2)
+    def GenerateRandomLocation(self):
+        RandomXLoc = random.randrange(0, self.CurrentBackground.DisplayWidth, 64)
+        RandomYLoc = random.randrange(0, self.CurrentBackground.DisplayHeight, 64)
+        return (RandomXLoc, RandomYLoc)
 
+    def CreateCharacters(self):
         for i in range(self.NumberOfCharacterEachTeam):
+            InitialLoc = self.GenerateRandomLocation()
+            while self.HasCharacterAtLocation(InitialLoc):
+                InitialLoc = self.GenerateRandomLocation()
             self.BlueCharacters.append(character.Character(InitialLoc, self, True))
+
+            InitialLoc = self.GenerateRandomLocation()
+            while self.HasCharacterAtLocation(InitialLoc):
+                InitialLoc = self.GenerateRandomLocation()
             self.RedCharacters.append(character.Character(InitialLoc, self, False))
 
         if self.CurrentGeneration == 0:
@@ -100,6 +111,13 @@ class GameMode:
                 continue
             return False
         return True
+
+    def HasCharacterAtLocation(self, Location, IgnoredCharacter = None):
+        AllCharacters = self.BlueCharacters + self.RedCharacters
+        for i in range(len(AllCharacters)):
+            if AllCharacters[i].CurrentLocation == Location and AllCharacters[i] != IgnoredCharacter:
+                return True
+        return False
 
     def DrawBestFitness(self, initial_x_loc, initial_y_loc):
         if self.CurrentBackground.Screen is None:

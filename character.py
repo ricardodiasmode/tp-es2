@@ -74,10 +74,12 @@ class Character:
         LocationToGo = (self.CurrentLocation[0] + position[0], self.CurrentLocation[1] + position[1])
 
         if LocationToGo[0] < 0 or LocationToGo[0] >= self.GameMode.CurrentBackground.DisplayWidth or \
-                LocationToGo[1] < 0 or LocationToGo[1] >= self.GameMode.CurrentBackground.DisplayHeight:
-            self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
+                LocationToGo[1] < 0 or LocationToGo[1] >= self.GameMode.CurrentBackground.DisplayHeight \
+                or self.GameMode.HasCharacterAtLocation(LocationToGo):
             return
 
+        ImageBelow = self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation]
+        self.GameMode.CurrentBackground.Screen.blit(ImageBelow, self.CurrentLocation)
         self.CurrentLocation = LocationToGo
         self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
 
