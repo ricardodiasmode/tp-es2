@@ -1,5 +1,7 @@
 import math
 import random
+import time
+
 import pygame
 import neuralNetwork
 
@@ -105,7 +107,6 @@ class Character:
             self.Die()
 
     def GetAction(self, action_index):
-        self.Rewards += 1
         self.Energy -= 1
         if action_index == 0:
             self.MoveLeft()
@@ -125,23 +126,24 @@ class Character:
         self.CheckShouldDie()
 
     def CraftKnife(self):
-        if self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation] != "LOG" or \
+        if self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] != "LOG" or \
                 self.HasKnife:
             return
 
         self.Energy += 10
         self.Rewards += 10
 
-        self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation] = "GRASS"
+        self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] = "GRASS"
         self.HasKnife = True
         self.UpdateImage()
 
     def KillEnemy(self):
         if not self.HasKnife:
             return
-        if self.GameMode.GetCharacterClose(self.CurrentLocation) is None:
+        if self.GameMode.GetCharacterClose(self) is None:
+            print("Tryna kill but there is no CHARACTER! self is: " + ("Blue" if self.BlueTeamMember else "Red"))
             return
 
         self.GameMode.GetCharacterClose(self).Die()
         self.Energy += 10
-        self.Rewards += 10
+        self.Rewards += 30

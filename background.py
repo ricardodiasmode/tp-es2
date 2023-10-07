@@ -13,6 +13,7 @@ class Background:
     Screen = None
     SquareImageDict = {}
     SquareDict = {}
+    LogLocations = []
     LastGapLocation = -1
 
     Grass0Img = pygame.image.load('img/Grass0.png')
@@ -23,6 +24,9 @@ class Background:
 
     def __init__(self):
         self.Screen = pygame.display.set_mode((self.DisplayWidth + 275, self.DisplayHeight))
+        self.ResetBackground()
+
+    def ResetBackground(self):
         self.LogLocations = []
         self.SquareImageDict = {}
         self.SquareDict = {}
@@ -36,21 +40,21 @@ class Background:
                 randomNumber = randrange(5)
                 ImageToUse = self.Grass0Img
                 if randomNumber == 1:
-                    ImageToUse = self.Grass1Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
-                elif randomNumber == 2:
-                    ImageToUse = self.Grass2Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
-                elif randomNumber == 3:
-                    ImageToUse = self.Grass3Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
-                elif randomNumber == 4:
                     ImageToUse = self.LogImg
                     self.LogLocations.append((currentWidth, currentHeight))
                     self.SquareDict[(currentWidth, currentHeight)] = "LOG"
                     spawned_at_least_one_log = True
+                elif randomNumber == 2:
+                    ImageToUse = self.Grass1Img
+                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
+                elif randomNumber == 3:
+                    ImageToUse = self.Grass2Img
+                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
+                else:
+                    ImageToUse = self.Grass3Img
+                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
 
                 self.Screen.blit(ImageToUse, (currentWidth, currentHeight))
                 self.SquareImageDict[(currentWidth, currentHeight)] = ImageToUse
         if not spawned_at_least_one_log:
-            self.InitBackground()
+            self.ResetBackground()

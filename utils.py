@@ -16,9 +16,9 @@ def GetClosestEnemyDist(character_loc, character_is_blue, game_mode):
     closest_enemy_index = 0
     closest_dist = 999999
     if character_is_blue:
-        enemies = game_mode.BlueCharacters
-    else:
         enemies = game_mode.RedCharacters
+    else:
+        enemies = game_mode.BlueCharacters
 
     for i in range(len(enemies)):
         if closest_dist > DistanceBetweenLocations(enemies[i].CurrentLocation, character_loc):
