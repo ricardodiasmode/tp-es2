@@ -33,7 +33,11 @@ class Character:
             self.Dna.append((random.randint(0, 20000) / 10.0) - 1000.0)
 
     def UpdateImage(self):
-        # Updating image
+        if self.IsDead:
+            ImageBelow = self.GameMode.CurrentBackground.SquareImageDict[self.CurrentLocation]
+            self.GameMode.CurrentBackground.Screen.blit(ImageBelow, self.CurrentLocation)
+            return
+
         if self.HasKnife:
             if self.BlueTeamMember:
                 self.PlayerImage = pygame.image.load("img/BlueCharacterWithKnife.png")
@@ -88,6 +92,7 @@ class Character:
 
     def Die(self):
         self.IsDead = True
+        self.UpdateImage()
 
     def MutateDna(self, number_of_mutations):
         for k in range(math.ceil(number_of_mutations)):
@@ -141,7 +146,6 @@ class Character:
         if not self.HasKnife:
             return
         if self.GameMode.GetCharacterClose(self) is None:
-            print("Tryna kill but there is no CHARACTER! self is: " + ("Blue" if self.BlueTeamMember else "Red"))
             return
 
         self.GameMode.GetCharacterClose(self).Die()

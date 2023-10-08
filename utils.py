@@ -26,7 +26,7 @@ def GetClosestEnemyDist(character_loc, character_is_blue, game_mode):
             closest_enemy_index = i
 
     found_loc = enemies[closest_enemy_index].CurrentLocation
-    return (found_loc[0] - character_loc[0], found_loc[1] - character_loc[1])
+    return (found_loc[0] - character_loc[0], found_loc[1] - character_loc[1]), enemies[closest_enemy_index]
 
 
 def DistanceBetweenLocations(first_loc, second_loc):

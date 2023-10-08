@@ -1,7 +1,5 @@
 # Description: This file contains the neural network class and its functions
-import math
 import random
-
 import utils
 from layer import Layer
 
@@ -18,7 +16,7 @@ def relu(x):
 
 def GetEntryParams(character, gamemode):
     (LogXDist, LogYDist) = utils.GetClosestLogDist(character.CurrentLocation, gamemode.CurrentBackground)
-    (EnemyXDist, EnemyYDist) = utils.GetClosestEnemyDist(character.CurrentLocation, character.BlueTeamMember, gamemode)
+    (EnemyXDist, EnemyYDist), NotUsedEnemy = utils.GetClosestEnemyDist(character.CurrentLocation, character.BlueTeamMember, gamemode)
     return [
         LogXDist > 0,
         LogXDist == 0,

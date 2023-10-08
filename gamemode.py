@@ -45,6 +45,18 @@ class GameMode:
             if self.BestCharactersInTurn[0].Rewards > self.BestFitEver:
                 self.BestFitEver = self.BestCharactersInTurn[0].Rewards
 
+    def GetAliveCharacters(self):
+        AliveCharacters = []
+        for CurrentCharacter in self.BlueCharacters:
+            if CurrentCharacter.IsDead:
+                continue
+            AliveCharacters.append(CurrentCharacter)
+        for CurrentCharacter in self.RedCharacters:
+            if CurrentCharacter.IsDead:
+                continue
+            AliveCharacters.append(CurrentCharacter)
+        return AliveCharacters
+
     def InitNewGame(self):
         print("---------- Init generation: " + str(self.CurrentGeneration) + " ----------")
         self.ResetVariables()
@@ -114,20 +126,21 @@ class GameMode:
         return True
 
     def HasCharacterAtLocation(self, Location, IgnoredCharacter = None):
-        AllCharacters = self.BlueCharacters + self.RedCharacters
+        AllCharacters = self.GetAliveCharacters()
         for i in range(len(AllCharacters)):
             if AllCharacters[i].CurrentLocation == Location and AllCharacters[i] != IgnoredCharacter:
                 return True
         return False
 
     def GetCharacterClose(self, IgnoredCharacter):
-        AllCharacters = self.BlueCharacters + self.RedCharacters
+        AllCharacters = self.GetAliveCharacters()
         AllCharacters.remove(IgnoredCharacter)
-        for i in range(len(AllCharacters)):
-            ClosestDist = utils.GetClosestEnemyDist(IgnoredCharacter.CurrentLocation, IgnoredCharacter.BlueTeamMember, self)
-            if ClosestDist[0] == 0 and abs(ClosestDist[1]) == 64 or \
-                ClosestDist[0] == 64 and abs(ClosestDist[1]) == 0:
-                return AllCharacters[i]
+
+        ClosestDist, Enemy = utils.GetClosestEnemyDist(IgnoredCharacter.CurrentLocation, IgnoredCharacter.BlueTeamMember, self)
+        if ClosestDist[0] == 0 and abs(ClosestDist[1]) == 64 or \
+            ClosestDist[0] == 64 and abs(ClosestDist[1]) == 0:
+            return Enemy
+
         return None
 
     def DrawBestFitness(self, initial_x_loc, initial_y_loc):
