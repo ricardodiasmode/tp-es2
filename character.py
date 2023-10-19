@@ -1,9 +1,8 @@
 import math
 import random
-import time
-
 import pygame
 import neuralNetwork
+import utils
 
 BASE_REWARD = 100
 
@@ -79,6 +78,12 @@ class Character:
 
     def Move(self, position):
         LocationToGo = (self.CurrentLocation[0] + position[0], self.CurrentLocation[1] + position[1])
+        if utils.DistanceBetweenLocations(utils.GetClosestLogDist(LocationToGo,self.GameMode.CurrentBackground), LocationToGo) > \
+            utils.DistanceBetweenLocations(utils.GetClosestLogDist(self.CurrentLocation, self.GameMode.CurrentBackground),
+                                           self.CurrentLocation):
+            self.Rewards -= 2
+        else:
+            self.Rewards += 1
 
         if LocationToGo[0] < 0 or LocationToGo[0] >= self.GameMode.CurrentBackground.DisplayWidth or \
                 LocationToGo[1] < 0 or LocationToGo[1] >= self.GameMode.CurrentBackground.DisplayHeight \
@@ -126,26 +131,30 @@ class Character:
         elif action_index == 5:
             self.KillEnemy()
         else:
-            #  Do nothing
+            # Do nothing
             self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
         self.CheckShouldDie()
 
     def CraftKnife(self):
-        if self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] != "LOG" or \
-                self.HasKnife:
+        if self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] != "LOG": #or \
+                #self.HasKnife:
+            self.Rewards -= 2
             return
 
         self.Energy += 10
         self.Rewards += 10
 
-        self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] = "GRASS"
+        self.GameMode.CurrentBackground.UpdateSquare(self.CurrentLocation, "GRASS")
+        self.GameMode.CurrentBackground.LogLocations.remove(self.CurrentLocation)
         self.HasKnife = True
         self.UpdateImage()
 
     def KillEnemy(self):
         if not self.HasKnife:
+            self.Rewards -= 2
             return
         if self.GameMode.GetCharacterClose(self) is None:
+            self.Rewards -= 2
             return
 
         self.GameMode.GetCharacterClose(self).Die()

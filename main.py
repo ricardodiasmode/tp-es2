@@ -9,7 +9,7 @@ GameMode = gamemode.GameMode()
 GameMode.ResetGame()
 pygame.display.update()
 ShouldDrawInfo = False
-SleepTime = 0.1
+SleepTime = 0.0
 
 while GameMode.GameIsRunning:
     # Event loop

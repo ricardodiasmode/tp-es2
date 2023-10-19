@@ -9,16 +9,20 @@ def GetClosestLogDist(character_loc, background):
             closest_dist = DistanceBetweenLocations(background.LogLocations[i], character_loc)
             closest_log_index = i
     found_loc = background.LogLocations[closest_log_index]
-    return (found_loc[0] - character_loc[0], found_loc[1] - character_loc[1])
+    return found_loc[0] - character_loc[0], found_loc[1] - character_loc[1]
 
 
 def GetClosestEnemyDist(character_loc, character_is_blue, game_mode):
     closest_enemy_index = 0
     closest_dist = 999999
+
     if character_is_blue:
-        enemies = game_mode.RedCharacters
+        not_used_allies, enemies = game_mode.GetAliveCharactersByTeam()
     else:
-        enemies = game_mode.BlueCharacters
+        enemies, not_used_allies = game_mode.GetAliveCharactersByTeam()
+
+    if len(enemies) == 0:
+        return (9999, 9999), None
 
     for i in range(len(enemies)):
         if closest_dist > DistanceBetweenLocations(enemies[i].CurrentLocation, character_loc):

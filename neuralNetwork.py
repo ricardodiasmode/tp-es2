@@ -5,9 +5,9 @@ from layer import Layer
 
 INITIAL_WEIGHT_RATE = 1.0
 BIAS = 1
-AMOUNT_ENTRY_NEURON = 7 + BIAS
-AMOUNT_HIDDEN_NEURON = [5 + BIAS]
-AMOUNT_OUT_NEURON = 6
+AMOUNT_ENTRY_NEURON = 4 + BIAS
+AMOUNT_HIDDEN_NEURON = [4 + BIAS]
+AMOUNT_OUT_NEURON = 5
 
 
 def relu(x):
@@ -21,10 +21,7 @@ def GetEntryParams(character, gamemode):
         LogXDist > 0,
         LogXDist == 0,
         LogYDist > 0,
-        LogYDist == 0,
-        character.HasKnife,
-        -64 >= EnemyXDist >= 64,
-        -64 >= EnemyYDist >= 64,
+        LogYDist == 0
     ]
 
 
@@ -46,7 +43,11 @@ class NeuralNetwork:
     def InitializeWeights(self):
         for i in range(len(self.HiddenLayers)):
             for j in range(len(self.HiddenLayers[i].Neurons)):
-                if i == len(self.HiddenLayers) - 1:
+                if i == 0:
+                    for k in range(len(self.EntryLayer.Neurons)):
+                        self.HiddenLayers[i].Neurons[j].Weights.append(
+                            random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
+                elif i == len(self.HiddenLayers) - 1:
                     for k in range(len(self.OutLayer.Neurons)):
                         self.HiddenLayers[i].Neurons[j].Weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
@@ -74,7 +75,9 @@ class NeuralNetwork:
         for j in range(len(self.HiddenLayers[0].Neurons)):
             Sum = 0
             for k in range(len(self.HiddenLayers[0].Neurons[j].Weights)):
-                Sum = Sum + self.HiddenLayers[0].Neurons[j].Weights[k] * self.EntryLayer.Neurons[k].OutValue
+                HiddenLayerWeight = self.HiddenLayers[0].Neurons[j].Weights[k]
+                InputValue = self.EntryLayer.Neurons[k].OutValue
+                Sum = Sum + HiddenLayerWeight * InputValue
             self.HiddenLayers[0].Neurons[j].OutValue = relu(Sum)
         # Calculate the other Hidden Layers
         for i in range(1, len(self.HiddenLayers)):

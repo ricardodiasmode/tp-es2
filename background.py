@@ -58,3 +58,10 @@ class Background:
                 self.SquareImageDict[(currentWidth, currentHeight)] = ImageToUse
         if not spawned_at_least_one_log:
             self.ResetBackground()
+
+    def UpdateSquare(self, Loc, Type):
+        self.SquareDict[Loc] = Type
+        if Type == "GRASS":
+            self.SquareImageDict[Loc] = self.Grass0Img
+        else:
+            self.SquareImageDict[Loc] = self.LogImg

@@ -48,14 +48,23 @@ class GameMode:
     def GetAliveCharacters(self):
         AliveCharacters = []
         for CurrentCharacter in self.BlueCharacters:
-            if CurrentCharacter.IsDead:
-                continue
-            AliveCharacters.append(CurrentCharacter)
+            if not CurrentCharacter.IsDead:
+                AliveCharacters.append(CurrentCharacter)
         for CurrentCharacter in self.RedCharacters:
-            if CurrentCharacter.IsDead:
-                continue
-            AliveCharacters.append(CurrentCharacter)
+            if not CurrentCharacter.IsDead:
+                AliveCharacters.append(CurrentCharacter)
         return AliveCharacters
+
+    def GetAliveCharactersByTeam(self):
+        BlueAliveCharacters = []
+        RedAliveCharacters = []
+        for CurrentCharacter in self.BlueCharacters:
+            if not CurrentCharacter.IsDead:
+                BlueAliveCharacters.append(CurrentCharacter)
+        for CurrentCharacter in self.RedCharacters:
+            if not CurrentCharacter.IsDead:
+                RedAliveCharacters.append(CurrentCharacter)
+        return BlueAliveCharacters, RedAliveCharacters
 
     def InitNewGame(self):
         print("---------- Init generation: " + str(self.CurrentGeneration) + " ----------")
@@ -87,8 +96,8 @@ class GameMode:
     def ChangeCharactersDna(self):
         if len(self.BestCharactersInTurn) == 0:
             return
-        print("Best car score (round): " + str(self.BestCharactersInTurn[0].Rewards))
-        print("Best car DNA(round): " + str(self.BestCharactersInTurn[0].Dna))
+        print("Best character score (round): " + str(self.BestCharactersInTurn[0].Rewards))
+        print("Best character DNA(round): " + str(self.BestCharactersInTurn[0].Dna))
         self.CloneBestCharacters()
         self.MutateCharacters()
         self.NumberOfMutations *= 0.999
@@ -137,8 +146,8 @@ class GameMode:
         AllCharacters.remove(IgnoredCharacter)
 
         ClosestDist, Enemy = utils.GetClosestEnemyDist(IgnoredCharacter.CurrentLocation, IgnoredCharacter.BlueTeamMember, self)
-        if ClosestDist[0] == 0 and abs(ClosestDist[1]) == 64 or \
-            ClosestDist[0] == 64 and abs(ClosestDist[1]) == 0:
+        if (ClosestDist[0] == 0 and abs(ClosestDist[1]) == 64 or
+            ClosestDist[0] == 64 and abs(ClosestDist[1]) == 0) and Enemy is not None:
             return Enemy
 
         return None
@@ -172,13 +181,13 @@ class GameMode:
 
         # Drawing first layer texts
         Font = pygame.font.SysFont("comicsansms", 14)
-        FirstNeuronText = Font.render("LogXDist > 0", True, (0, 0, 0))
-        SecondNeuronText = Font.render("LogXDist == 0", True, (0, 0, 0))
-        ThirdNeuronText = Font.render("LogYDist > 0", True, (0, 0, 0))
-        FouthNeuronText = Font.render("LogYDist == 0", True, (0, 0, 0))
-        FifthNeuronText = Font.render("HasKnife", True, (0, 0, 0))
-        SixthNeuronText = Font.render("-64 >= EnemyXDist >= 64", True, (0, 0, 0))
-        SeventhNeuronText = Font.render("-64 >= EnemyYDist >= 64", True, (0, 0, 0))
+        FirstNeuronText = Font.render("LX>0", True, (0, 0, 0))
+        SecondNeuronText = Font.render("LX==0", True, (0, 0, 0))
+        ThirdNeuronText = Font.render("LY>0", True, (0, 0, 0))
+        FouthNeuronText = Font.render("LY==0", True, (0, 0, 0))
+        FifthNeuronText = Font.render("Knife", True, (0, 0, 0))
+        SixthNeuronText = Font.render("-64>=EX>=64", True, (0, 0, 0))
+        SeventhNeuronText = Font.render("-64>=EY>=64", True, (0, 0, 0))
         self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc, initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(SecondNeuronText, (initial_x_loc, 20 + initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(ThirdNeuronText, (initial_x_loc, 40 + initial_y_loc - 13))
