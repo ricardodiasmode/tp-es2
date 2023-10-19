@@ -16,6 +16,3 @@ Todo o loop do jogo se resume aos passos:
     3.2. Caso contrário, volta para etapa 2.
 
 Note que o ato de reiniciar a geração significa realizar todos os rituais de uma rede neural que trabalha com aprendizado por reforço, que vou omitir aqui pois me extenderia demais.
-
-# 3. 
-

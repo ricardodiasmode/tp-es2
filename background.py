@@ -4,63 +4,63 @@ import pygame.display
 
 
 class Background:
-    RoundsWithoutSpawningLog = 2
-    MinRoundsToSpawnLog = 3
-    MaxRoundsToSpawnLog = 5
-    DisplayWidth = 1024
-    DisplayHeight = 1024
-    BasicSquareSize = 64
-    Screen = None
-    SquareImageDict = {}
-    SquareDict = {}
-    LogLocations = []
-    LastGapLocation = -1
+    rounds_without_spawning_log = 2
+    min_rounds_to_spawn_log = 3
+    max_rounds_to_spawn_log = 5
+    display_width = 1024
+    display_height = 1024
+    basic_square_size = 64
+    screen = None
+    square_image_dict = {}
+    square_dict = {}
+    log_locations = []
+    last_gap_location = -1
 
-    Grass0Img = pygame.image.load('img/Grass0.png')
-    Grass1Img = pygame.image.load('img/Grass1.png')
-    Grass2Img = pygame.image.load('img/Grass2.png')
-    Grass3Img = pygame.image.load('img/Grass3.png')
-    LogImg = pygame.image.load('img/Log.png')
+    grass0_img = pygame.image.load('img/Grass0.png')
+    grass1_img = pygame.image.load('img/Grass1.png')
+    grass2_img = pygame.image.load('img/Grass2.png')
+    grass3_img = pygame.image.load('img/Grass3.png')
+    log_img = pygame.image.load('img/Log.png')
 
     def __init__(self):
-        self.Screen = pygame.display.set_mode((self.DisplayWidth + 275, self.DisplayHeight))
-        self.ResetBackground()
+        self.screen = pygame.display.set_mode((self.display_width + 275, self.display_height))
+        self.reset_background()
 
-    def ResetBackground(self):
-        self.LogLocations = []
-        self.SquareImageDict = {}
-        self.SquareDict = {}
-        self.InitBackground()
+    def reset_background(self):
+        self.log_locations = []
+        self.square_image_dict = {}
+        self.square_dict = {}
+        self.init_background()
 
-    def InitBackground(self):
+    def init_background(self):
         # filling background with grass
         spawned_at_least_one_log = False
-        for currentWidth in range(0, self.DisplayWidth, self.BasicSquareSize):
-            for currentHeight in range(0, self.DisplayHeight, self.BasicSquareSize):
-                randomNumber = randrange(5)
-                if randomNumber == 1:
-                    ImageToUse = self.LogImg
-                    self.LogLocations.append((currentWidth, currentHeight))
-                    self.SquareDict[(currentWidth, currentHeight)] = "LOG"
+        for current_width in range(0, self.display_width, self.basic_square_size):
+            for current_height in range(0, self.display_height, self.basic_square_size):
+                random_number = randrange(5)
+                if random_number == 1:
+                    image_to_use = self.log_img
+                    self.log_locations.append((current_width, current_height))
+                    self.square_dict[(current_width, current_height)] = "LOG"
                     spawned_at_least_one_log = True
-                elif randomNumber == 2:
-                    ImageToUse = self.Grass1Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
-                elif randomNumber == 3:
-                    ImageToUse = self.Grass2Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
+                elif random_number == 2:
+                    image_to_use = self.grass1_img
+                    self.square_dict[(current_width, current_height)] = "GRASS"
+                elif random_number == 3:
+                    image_to_use = self.grass2_img
+                    self.square_dict[(current_width, current_height)] = "GRASS"
                 else:
-                    ImageToUse = self.Grass3Img
-                    self.SquareDict[(currentWidth, currentHeight)] = "GRASS"
+                    image_to_use = self.grass3_img
+                    self.square_dict[(current_width, current_height)] = "GRASS"
 
-                self.Screen.blit(ImageToUse, (currentWidth, currentHeight))
-                self.SquareImageDict[(currentWidth, currentHeight)] = ImageToUse
+                self.screen.blit(image_to_use, (current_width, current_height))
+                self.square_image_dict[(current_width, current_height)] = image_to_use
         if not spawned_at_least_one_log:
-            self.ResetBackground()
+            self.reset_background()
 
-    def UpdateSquare(self, Loc, Type):
-        self.SquareDict[Loc] = Type
-        if Type == "GRASS":
-            self.SquareImageDict[Loc] = self.Grass0Img
+    def update_square(self, loc, in_type):
+        self.square_dict[loc] = in_type
+        if in_type == "GRASS":
+            self.square_image_dict[loc] = self.grass0_img
         else:
-            self.SquareImageDict[Loc] = self.LogImg
+            self.square_image_dict[loc] = self.log_img

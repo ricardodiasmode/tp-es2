@@ -14,111 +14,111 @@ def relu(x):
     return max(0, x)
 
 
-def GetEntryParams(character, gamemode):
-    (LogXDist, LogYDist) = utils.GetClosestLogDist(character.CurrentLocation, gamemode.CurrentBackground)
+def get_entry_params(character, gamemode):
+    (log_x_dist, log_y_dist) = utils.get_closest_log_dist(character.current_location, gamemode.current_background)
     return [
-        LogXDist > 0,
-        LogXDist == 0,
-        LogYDist > 0,
-        LogYDist == 0
+        log_x_dist > 0,
+        log_x_dist == 0,
+        log_y_dist > 0,
+        log_y_dist == 0
     ]
 
 
 class NeuralNetwork:
-    EntryLayer = []
-    HiddenLayer = []
-    OutLayer = []
+    entry_layer = []
+    hidden_layer = []
+    out_layer = []
 
-    LastCalculatedOutput = []
+    last_calculated_output = []
 
     def __init__(self):
-        self.EntryLayer = Layer(AMOUNT_ENTRY_NEURON, 0)
-        self.HiddenLayers = [Layer(AMOUNT_HIDDEN_NEURON[i], AMOUNT_ENTRY_NEURON) for i in
-                             range(len(AMOUNT_HIDDEN_NEURON))]
-        self.OutLayer = Layer(AMOUNT_OUT_NEURON, AMOUNT_HIDDEN_NEURON[-1])
+        self.entry_layer = Layer(AMOUNT_ENTRY_NEURON, 0)
+        self.hidden_layers = [Layer(AMOUNT_HIDDEN_NEURON[i], AMOUNT_ENTRY_NEURON) for i in
+                              range(len(AMOUNT_HIDDEN_NEURON))]
+        self.out_layer = Layer(AMOUNT_OUT_NEURON, AMOUNT_HIDDEN_NEURON[-1])
 
-        self.InitializeWeights()
+        self.initialize_weights()
 
-    def InitializeWeights(self):
-        for i in range(len(self.HiddenLayers)):
-            for j in range(len(self.HiddenLayers[i].Neurons)):
+    def initialize_weights(self):
+        for i in range(len(self.hidden_layers)):
+            for j in range(len(self.hidden_layers[i].neurons)):
                 if i == 0:
-                    for k in range(len(self.EntryLayer.Neurons)):
-                        self.HiddenLayers[i].Neurons[j].Weights.append(
+                    for k in range(len(self.entry_layer.neurons)):
+                        self.hidden_layers[i].neurons[j].Weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
-                elif i == len(self.HiddenLayers) - 1:
-                    for k in range(len(self.OutLayer.Neurons)):
-                        self.HiddenLayers[i].Neurons[j].Weights.append(
+                elif i == len(self.hidden_layers) - 1:
+                    for k in range(len(self.out_layer.neurons)):
+                        self.hidden_layers[i].neurons[j].Weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
                 else:
-                    for k in range(len(self.HiddenLayers[i + 1].Neurons)):
-                        self.HiddenLayers[i].Neurons[j].Weights.append(
+                    for k in range(len(self.hidden_layers[i + 1].neurons)):
+                        self.hidden_layers[i].neurons[j].Weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
-        for j in range(len(self.OutLayer.Neurons)):
-            for k in range(len(self.HiddenLayers[-1].Neurons)):
-                self.OutLayer.Neurons[j].Weights.append(
+        for j in range(len(self.out_layer.neurons)):
+            for k in range(len(self.hidden_layers[-1].neurons)):
+                self.out_layer.neurons[j].Weights.append(
                     random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
 
     def Think(self, character, gamemode):
-        self.FeedEntryLayer(character, gamemode)
-        self.CalculateWeights()
-        self.LastCalculatedOutput = self.GetOutput()
+        self.feed_entry_layer(character, gamemode)
+        self.calculate_weights()
+        self.last_calculated_output = self.get_output()
 
-    def FeedEntryLayer(self, character, gamemode):
-        EntryParams = GetEntryParams(character, gamemode)
-        for i in range(len(self.EntryLayer.Neurons) - BIAS):
-            self.EntryLayer.Neurons[i].OutValue = int(EntryParams[i])
+    def feed_entry_layer(self, character, gamemode):
+        entry_params = get_entry_params(character, gamemode)
+        for i in range(len(self.entry_layer.neurons) - BIAS):
+            self.entry_layer.neurons[i].OutValue = int(entry_params[i])
 
-    def CalculateWeights(self):
-        self.Calculate_First_Hidden_Layer_Weights()
-        self.Calculate_Hidden_Layers_Weights()
-        self.Calculate_Out_Layer_Weights()
+    def calculate_weights(self):
+        self.calculate_first_hidden_layer_weights()
+        self.calculate_hidden_layers_weights()
+        self.calculate_out_layer_weights()
 
-    def Calculate_Out_Layer_Weights(self):
-        for j in range(len(self.OutLayer.Neurons)):
-            Sum = 0
-            for k in range(len(self.OutLayer.Neurons[j].Weights)):
-                Sum += self.OutLayer.Neurons[j].Weights[k] * self.HiddenLayers[-1].Neurons[k].OutValue
-            self.OutLayer.Neurons[j].OutValue = relu(Sum)
+    def calculate_out_layer_weights(self):
+        for j in range(len(self.out_layer.neurons)):
+            sum = 0
+            for k in range(len(self.out_layer.neurons[j].Weights)):
+                sum += self.out_layer.neurons[j].Weights[k] * self.hidden_layers[-1].neurons[k].OutValue
+            self.out_layer.neurons[j].OutValue = relu(sum)
 
-    def Calculate_Hidden_Layers_Weights(self):
-        for i in range(1, len(self.HiddenLayers)):
-            for j in range(len(self.HiddenLayers[i].Neurons)):
-                Sum = 0
-                for k in range(len(self.HiddenLayers[i].Neurons[j].Weights)):
-                    Sum += self.HiddenLayers[i].Neurons[j].Weights[k] * self.HiddenLayers[i - 1].Neurons[k].OutValue
-                self.HiddenLayers[i].Neurons[j].OutValue = relu(Sum)
+    def calculate_hidden_layers_weights(self):
+        for i in range(1, len(self.hidden_layers)):
+            for j in range(len(self.hidden_layers[i].neurons)):
+                sum = 0
+                for k in range(len(self.hidden_layers[i].neurons[j].Weights)):
+                    sum += self.hidden_layers[i].neurons[j].Weights[k] * self.hidden_layers[i - 1].neurons[k].OutValue
+                self.hidden_layers[i].neurons[j].OutValue = relu(sum)
 
-    def Calculate_First_Hidden_Layer_Weights(self):
-        for j in range(len(self.HiddenLayers[0].Neurons)):
-            Sum = 0
-            for k in range(len(self.HiddenLayers[0].Neurons[j].Weights)):
-                HiddenLayerWeight = self.HiddenLayers[0].Neurons[j].Weights[k]
-                InputValue = self.EntryLayer.Neurons[k].OutValue
-                Sum = Sum + HiddenLayerWeight * InputValue
-            self.HiddenLayers[0].Neurons[j].OutValue = relu(Sum)
+    def calculate_first_hidden_layer_weights(self):
+        for j in range(len(self.hidden_layers[0].neurons)):
+            sum = 0
+            for k in range(len(self.hidden_layers[0].neurons[j].Weights)):
+                hidden_layer_weight = self.hidden_layers[0].neurons[j].Weights[k]
+                input_value = self.entry_layer.neurons[k].OutValue
+                sum = sum + hidden_layer_weight * input_value
+            self.hidden_layers[0].neurons[j].OutValue = relu(sum)
 
-    def GetOutput(self):
-        GreaterOutValueIndex = -1
-        Output = []
-        for i in range(len(self.OutLayer.Neurons)):
-            if self.OutLayer.Neurons[i].OutValue > self.OutLayer.Neurons[GreaterOutValueIndex].OutValue:
-                GreaterOutValueIndex = i
-        for i in range(len(self.OutLayer.Neurons)):
-            if i != GreaterOutValueIndex:
-                Output.append(0)
+    def get_output(self):
+        greater_out_value_index = -1
+        output = []
+        for i in range(len(self.out_layer.neurons)):
+            if self.out_layer.neurons[i].OutValue > self.out_layer.neurons[greater_out_value_index].OutValue:
+                greater_out_value_index = i
+        for i in range(len(self.out_layer.neurons)):
+            if i != greater_out_value_index:
+                output.append(0)
             else:
-                Output.append(1)
-        if GreaterOutValueIndex == -1:
-            Output[-1] = 1
-        return Output
+                output.append(1)
+        if greater_out_value_index == -1:
+            output[-1] = 1
+        return output
 
-    def GetWeightAmount(self):
-        Sum = 0
-        for i in range(len(self.HiddenLayers)):
-            for j in range(len(self.HiddenLayers[i].Neurons)):
-                Sum += len(self.HiddenLayers[i].Neurons[j].Weights)
+    def get_weight_amount(self):
+        sum = 0
+        for i in range(len(self.hidden_layers)):
+            for j in range(len(self.hidden_layers[i].neurons)):
+                sum += len(self.hidden_layers[i].neurons[j].Weights)
 
-        for j in range(len(self.OutLayer.Neurons)):
-            Sum += len(self.OutLayer.Neurons[j].Weights)
-        return Sum
+        for j in range(len(self.out_layer.neurons)):
+            sum += len(self.out_layer.neurons[j].Weights)
+        return sum
