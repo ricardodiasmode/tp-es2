@@ -128,16 +128,14 @@ class Character:
             self.MoveDown()
         elif action_index == 4:
             self.CraftKnife()
-        elif action_index == 5:
-            self.KillEnemy()
         else:
             # Do nothing
             self.GameMode.CurrentBackground.Screen.blit(self.PlayerImage, self.CurrentLocation)
         self.CheckShouldDie()
 
     def CraftKnife(self):
-        if self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] != "LOG": #or \
-                #self.HasKnife:
+        if self.GameMode.CurrentBackground.SquareDict[self.CurrentLocation] != "LOG" or \
+                self.HasKnife:
             self.Rewards -= 2
             return
 
@@ -148,15 +146,3 @@ class Character:
         self.GameMode.CurrentBackground.LogLocations.remove(self.CurrentLocation)
         self.HasKnife = True
         self.UpdateImage()
-
-    def KillEnemy(self):
-        if not self.HasKnife:
-            self.Rewards -= 2
-            return
-        if self.GameMode.GetCharacterClose(self) is None:
-            self.Rewards -= 2
-            return
-
-        self.GameMode.GetCharacterClose(self).Die()
-        self.Energy += 10
-        self.Rewards += 30

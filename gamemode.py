@@ -185,16 +185,10 @@ class GameMode:
         SecondNeuronText = Font.render("LX==0", True, (0, 0, 0))
         ThirdNeuronText = Font.render("LY>0", True, (0, 0, 0))
         FouthNeuronText = Font.render("LY==0", True, (0, 0, 0))
-        FifthNeuronText = Font.render("Knife", True, (0, 0, 0))
-        SixthNeuronText = Font.render("-64>=EX>=64", True, (0, 0, 0))
-        SeventhNeuronText = Font.render("-64>=EY>=64", True, (0, 0, 0))
         self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc, initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(SecondNeuronText, (initial_x_loc, 20 + initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(ThirdNeuronText, (initial_x_loc, 40 + initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(FouthNeuronText, (initial_x_loc, 60 + initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(FifthNeuronText, (initial_x_loc, 80 + initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(SixthNeuronText, (initial_x_loc, 100 + initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(SeventhNeuronText, (initial_x_loc, 120 + initial_y_loc - 13))
 
         # Drawing first layer neurons
         for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):
@@ -224,7 +218,6 @@ class GameMode:
         ThirdNeuronText = Font.render("Up", True, (0, 0, 0))
         FourthNeuronText = Font.render("Down", True, (0, 0, 0))
         FifthNeuronText = Font.render("Craft", True, (0, 0, 0))
-        SixthNeuronText = Font.render("Kill", True, (0, 0, 0))
         self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc + 160, initial_y_loc - 13))
         self.CurrentBackground.Screen.blit(SecondNeuronText,
                                            (initial_x_loc + 160, initial_y_loc + 1 * EachNeuronOffset - 13))
@@ -234,8 +227,6 @@ class GameMode:
                                            (initial_x_loc + 160, initial_y_loc + 3 * EachNeuronOffset - 13))
         self.CurrentBackground.Screen.blit(FifthNeuronText,
                                            (initial_x_loc + 160, initial_y_loc + 4 * EachNeuronOffset - 13))
-        self.CurrentBackground.Screen.blit(SixthNeuronText,
-                                           (initial_x_loc + 160, initial_y_loc + 5 * EachNeuronOffset - 13))
 
         # Drawing connections
         for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):

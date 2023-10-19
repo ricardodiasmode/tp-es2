@@ -16,7 +16,6 @@ def relu(x):
 
 def GetEntryParams(character, gamemode):
     (LogXDist, LogYDist) = utils.GetClosestLogDist(character.CurrentLocation, gamemode.CurrentBackground)
-    (EnemyXDist, EnemyYDist), NotUsedEnemy = utils.GetClosestEnemyDist(character.CurrentLocation, character.BlueTeamMember, gamemode)
     return [
         LogXDist > 0,
         LogXDist == 0,
@@ -118,15 +117,3 @@ class NeuralNetwork:
         for j in range(len(self.OutLayer.Neurons)):
             Sum += len(self.OutLayer.Neurons[j].Weights)
         return Sum
-
-    def InitWeightsByDna(self, dna):
-        j = 0
-        for i in range(len(self.HiddenLayers)):
-            for k in range(len(self.HiddenLayers[i].Neurons)):
-                for l in range(len(self.HiddenLayers[i].Neurons[k].Weights)):
-                    self.HiddenLayers[i].Neurons[k].Weights[l] = dna[j]
-                    j += 1
-        for k in range(len(self.OutLayer.Neurons)):
-            for l in range(len(self.OutLayer.Neurons[k].Weights)):
-                self.OutLayer.Neurons[k].Weights[l] = dna[j]
-                j += 1
