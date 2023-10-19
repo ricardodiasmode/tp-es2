@@ -70,15 +70,18 @@ class NeuralNetwork:
             self.EntryLayer.Neurons[i].OutValue = int(EntryParams[i])
 
     def CalculateWeights(self):
-        # Calculate the first Hidden Layer
-        for j in range(len(self.HiddenLayers[0].Neurons)):
+        self.Calculate_First_Hidden_Layer_Weights()
+        self.Calculate_Hidden_Layers_Weights()
+        self.Calculate_Out_Layer_Weights()
+
+    def Calculate_Out_Layer_Weights(self):
+        for j in range(len(self.OutLayer.Neurons)):
             Sum = 0
-            for k in range(len(self.HiddenLayers[0].Neurons[j].Weights)):
-                HiddenLayerWeight = self.HiddenLayers[0].Neurons[j].Weights[k]
-                InputValue = self.EntryLayer.Neurons[k].OutValue
-                Sum = Sum + HiddenLayerWeight * InputValue
-            self.HiddenLayers[0].Neurons[j].OutValue = relu(Sum)
-        # Calculate the other Hidden Layers
+            for k in range(len(self.OutLayer.Neurons[j].Weights)):
+                Sum += self.OutLayer.Neurons[j].Weights[k] * self.HiddenLayers[-1].Neurons[k].OutValue
+            self.OutLayer.Neurons[j].OutValue = relu(Sum)
+
+    def Calculate_Hidden_Layers_Weights(self):
         for i in range(1, len(self.HiddenLayers)):
             for j in range(len(self.HiddenLayers[i].Neurons)):
                 Sum = 0
@@ -86,12 +89,14 @@ class NeuralNetwork:
                     Sum += self.HiddenLayers[i].Neurons[j].Weights[k] * self.HiddenLayers[i - 1].Neurons[k].OutValue
                 self.HiddenLayers[i].Neurons[j].OutValue = relu(Sum)
 
-        # Calculate the Out Layer
-        for j in range(len(self.OutLayer.Neurons)):
+    def Calculate_First_Hidden_Layer_Weights(self):
+        for j in range(len(self.HiddenLayers[0].Neurons)):
             Sum = 0
-            for k in range(len(self.OutLayer.Neurons[j].Weights)):
-                Sum += self.OutLayer.Neurons[j].Weights[k] * self.HiddenLayers[-1].Neurons[k].OutValue
-            self.OutLayer.Neurons[j].OutValue = relu(Sum)
+            for k in range(len(self.HiddenLayers[0].Neurons[j].Weights)):
+                HiddenLayerWeight = self.HiddenLayers[0].Neurons[j].Weights[k]
+                InputValue = self.EntryLayer.Neurons[k].OutValue
+                Sum = Sum + HiddenLayerWeight * InputValue
+            self.HiddenLayers[0].Neurons[j].OutValue = relu(Sum)
 
     def GetOutput(self):
         GreaterOutValueIndex = -1

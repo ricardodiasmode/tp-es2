@@ -38,7 +38,6 @@ class Background:
         for currentWidth in range(0, self.DisplayWidth, self.BasicSquareSize):
             for currentHeight in range(0, self.DisplayHeight, self.BasicSquareSize):
                 randomNumber = randrange(5)
-                ImageToUse = self.Grass0Img
                 if randomNumber == 1:
                     ImageToUse = self.LogImg
                     self.LogLocations.append((currentWidth, currentHeight))

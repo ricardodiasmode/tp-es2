@@ -179,56 +179,24 @@ class GameMode:
         BlueColor = (0, 0, 255)
         NeuronActiveColor = BlueColor if self.BestCharactersInTurn[0].BlueTeamMember else RedColor
 
-        # Drawing first layer texts
-        Font = pygame.font.SysFont("comicsansms", 14)
-        FirstNeuronText = Font.render("LX>0", True, (0, 0, 0))
-        SecondNeuronText = Font.render("LX==0", True, (0, 0, 0))
-        ThirdNeuronText = Font.render("LY>0", True, (0, 0, 0))
-        FouthNeuronText = Font.render("LY==0", True, (0, 0, 0))
-        self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc, initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(SecondNeuronText, (initial_x_loc, 20 + initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(ThirdNeuronText, (initial_x_loc, 40 + initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(FouthNeuronText, (initial_x_loc, 60 + initial_y_loc - 13))
+        Font = self.Draw_First_Layer_Text(initial_x_loc, initial_y_loc)
 
-        # Drawing first layer neurons
-        for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):
-            NeuronColor = (0, 0, 0) if BestCharacterBrain.EntryLayer.Neurons[i].OutValue == 0 else NeuronActiveColor
-            pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
-                               (initial_x_loc + 50, initial_y_loc + i * EachNeuronOffset),
-                               7)
+        self.Draw_First_Layer_Neurons(BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                      initial_y_loc)
 
-        # Drawing hidden layers neurons
-        for i in range(len(BestCharacterBrain.HiddenLayers)):
-            for j in range(len(BestCharacterBrain.HiddenLayers[i].Neurons) - BIAS):
-                NeuronColor = (0, 0, 0) if BestCharacterBrain.HiddenLayers[i].Neurons[j].OutValue == 0 else NeuronActiveColor
-                pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
-                                   (initial_x_loc + 100 + i * 50, initial_y_loc + j * EachNeuronOffset),
-                                   7)
+        self.Draw_Hidden_Layer_Neurons(BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                       initial_y_loc)
 
-        # Drawing output layer neurons
-        for i in range(len(BestCharacterBrain.LastCalculatedOutput)):
-            NeuronColor = (0, 0, 0) if BestCharacterBrain.LastCalculatedOutput[i] == 0 else NeuronActiveColor
-            pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
-                               (initial_x_loc + 150, initial_y_loc + i * EachNeuronOffset),
-                               7)
+        self.Draw_Output_Layer_Neurons(BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                       initial_y_loc)
 
-        # Drawing output layer texts
-        FirstNeuronText = Font.render("Left", True, (0, 0, 0))
-        SecondNeuronText = Font.render("Right", True, (0, 0, 0))
-        ThirdNeuronText = Font.render("Up", True, (0, 0, 0))
-        FourthNeuronText = Font.render("Down", True, (0, 0, 0))
-        FifthNeuronText = Font.render("Craft", True, (0, 0, 0))
-        self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc + 160, initial_y_loc - 13))
-        self.CurrentBackground.Screen.blit(SecondNeuronText,
-                                           (initial_x_loc + 160, initial_y_loc + 1 * EachNeuronOffset - 13))
-        self.CurrentBackground.Screen.blit(ThirdNeuronText,
-                                           (initial_x_loc + 160, initial_y_loc + 2 * EachNeuronOffset - 13))
-        self.CurrentBackground.Screen.blit(FourthNeuronText,
-                                           (initial_x_loc + 160, initial_y_loc + 3 * EachNeuronOffset - 13))
-        self.CurrentBackground.Screen.blit(FifthNeuronText,
-                                           (initial_x_loc + 160, initial_y_loc + 4 * EachNeuronOffset - 13))
+        self.Draw_Output_Layer_Texts(EachNeuronOffset, Font, initial_x_loc, initial_y_loc)
 
-        # Drawing connections
+        self.Draw_Connections(BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                              initial_y_loc)
+
+    def Draw_Connections(self, BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                         initial_y_loc):
         for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):
             for j in range(len(BestCharacterBrain.HiddenLayers[0].Neurons) - BIAS):
                 if BestCharacterBrain.EntryLayer.Neurons[i].OutValue > 0 and BestCharacterBrain.HiddenLayers[0].Neurons[
@@ -262,6 +230,60 @@ class GameMode:
                     pygame.draw.line(self.CurrentBackground.Screen, (0, 0, 0),
                                      (initial_x_loc + 100, initial_y_loc + i * EachNeuronOffset),
                                      (initial_x_loc + 150, initial_y_loc + j * EachNeuronOffset), 1)
+
+    def Draw_Output_Layer_Texts(self, EachNeuronOffset, Font, initial_x_loc, initial_y_loc):
+        FirstNeuronText = Font.render("Left", True, (0, 0, 0))
+        SecondNeuronText = Font.render("Right", True, (0, 0, 0))
+        ThirdNeuronText = Font.render("Up", True, (0, 0, 0))
+        FourthNeuronText = Font.render("Down", True, (0, 0, 0))
+        FifthNeuronText = Font.render("Craft", True, (0, 0, 0))
+        self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc + 160, initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(SecondNeuronText,
+                                           (initial_x_loc + 160, initial_y_loc + 1 * EachNeuronOffset - 13))
+        self.CurrentBackground.Screen.blit(ThirdNeuronText,
+                                           (initial_x_loc + 160, initial_y_loc + 2 * EachNeuronOffset - 13))
+        self.CurrentBackground.Screen.blit(FourthNeuronText,
+                                           (initial_x_loc + 160, initial_y_loc + 3 * EachNeuronOffset - 13))
+        self.CurrentBackground.Screen.blit(FifthNeuronText,
+                                           (initial_x_loc + 160, initial_y_loc + 4 * EachNeuronOffset - 13))
+
+    def Draw_Output_Layer_Neurons(self, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                  initial_y_loc):
+        for i in range(len(BestCharacterBrain.LastCalculatedOutput)):
+            NeuronColor = (0, 0, 0) if BestCharacterBrain.LastCalculatedOutput[i] == 0 else NeuronActiveColor
+            pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
+                               (initial_x_loc + 150, initial_y_loc + i * EachNeuronOffset),
+                               7)
+
+    def Draw_Hidden_Layer_Neurons(self, BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                  initial_y_loc):
+        for i in range(len(BestCharacterBrain.HiddenLayers)):
+            for j in range(len(BestCharacterBrain.HiddenLayers[i].Neurons) - BIAS):
+                NeuronColor = (0, 0, 0) if BestCharacterBrain.HiddenLayers[i].Neurons[
+                                               j].OutValue == 0 else NeuronActiveColor
+                pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
+                                   (initial_x_loc + 100 + i * 50, initial_y_loc + j * EachNeuronOffset),
+                                   7)
+
+    def Draw_First_Layer_Neurons(self, BIAS, BestCharacterBrain, EachNeuronOffset, NeuronActiveColor, initial_x_loc,
+                                 initial_y_loc):
+        for i in range(len(BestCharacterBrain.EntryLayer.Neurons) - BIAS):
+            NeuronColor = (0, 0, 0) if BestCharacterBrain.EntryLayer.Neurons[i].OutValue == 0 else NeuronActiveColor
+            pygame.draw.circle(self.CurrentBackground.Screen, NeuronColor,
+                               (initial_x_loc + 50, initial_y_loc + i * EachNeuronOffset),
+                               7)
+
+    def Draw_First_Layer_Text(self, initial_x_loc, initial_y_loc):
+        Font = pygame.font.SysFont("comicsansms", 14)
+        FirstNeuronText = Font.render("LX>0", True, (0, 0, 0))
+        SecondNeuronText = Font.render("LX==0", True, (0, 0, 0))
+        ThirdNeuronText = Font.render("LY>0", True, (0, 0, 0))
+        FouthNeuronText = Font.render("LY==0", True, (0, 0, 0))
+        self.CurrentBackground.Screen.blit(FirstNeuronText, (initial_x_loc, initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(SecondNeuronText, (initial_x_loc, 20 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(ThirdNeuronText, (initial_x_loc, 40 + initial_y_loc - 13))
+        self.CurrentBackground.Screen.blit(FouthNeuronText, (initial_x_loc, 60 + initial_y_loc - 13))
+        return Font
 
     def DrawInfo(self):
         InitialYLoc = 0
