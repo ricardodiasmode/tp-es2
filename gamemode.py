@@ -140,23 +140,21 @@ class GameMode:
                 return True
         return False
 
-    def draw_best_fitness(self, initial_x_loc, initial_y_loc):
+    def draw_best_fitness(self, initial_x_loc, initial_y_loc, font):
         if self.current_background.screen is None:
             return
 
-        font = pygame.font.SysFont("comicsansms", 13)
         best_fit_text = font.render("Best fitness (round): " + str(self.best_characters_in_turn[0].rewards), True,
                                     (0, 0, 0))
         best_fit_ever_text = font.render("Best fitness (ever): " + str(self.best_fit_ever), True, (0, 0, 0))
         self.current_background.screen.blit(best_fit_ever_text, (initial_x_loc, initial_y_loc))
         self.current_background.screen.blit(best_fit_text, (initial_x_loc, initial_y_loc + 15))
 
-    def draw_current_generation(self, initial_x_loc, initial_y_loc):
-        font = pygame.font.SysFont("comicsansms", 14)
+    def draw_current_generation(self, initial_x_loc, initial_y_loc, font):
         current_generation_text = font.render("Generation: " + str(self.current_generation), True, (0, 0, 0))
         self.current_background.screen.blit(current_generation_text, (initial_x_loc, initial_y_loc))
 
-    def draw_neural_net(self, initial_x_loc, initial_y_loc):
+    def draw_neural_net(self, initial_x_loc, initial_y_loc, font):
         bias = 1
         each_neuron_offset = 20
         if self.best_characters_in_turn[0] is None:
@@ -168,7 +166,7 @@ class GameMode:
         blue_color = (0, 0, 255)
         neuron_active_color = blue_color if self.best_characters_in_turn[0].blue_team_member else red_color
 
-        font = self.draw_first_layer_text(initial_x_loc, initial_y_loc)
+        self.draw_first_layer_text(initial_x_loc, initial_y_loc, font)
 
         self.draw_first_layer_neurons(bias, best_character_brain, each_neuron_offset, neuron_active_color,
                                       initial_x_loc,
@@ -265,8 +263,7 @@ class GameMode:
                                (initial_x_loc + 50, initial_y_loc + i * each_neuron_offset),
                                7)
 
-    def draw_first_layer_text(self, initial_x_loc, initial_y_loc):
-        font = pygame.font.SysFont("comicsansms", 14)
+    def draw_first_layer_text(self, initial_x_loc, initial_y_loc, font):
         first_neuron_text = font.render("LX>0", True, (0, 0, 0))
         second_neuron_text = font.render("LX==0", True, (0, 0, 0))
         third_neuron_text = font.render("LY>0", True, (0, 0, 0))
@@ -275,14 +272,14 @@ class GameMode:
         self.current_background.screen.blit(second_neuron_text, (initial_x_loc, 20 + initial_y_loc - 13))
         self.current_background.screen.blit(third_neuron_text, (initial_x_loc, 40 + initial_y_loc - 13))
         self.current_background.screen.blit(fouth_neuron_text, (initial_x_loc, 60 + initial_y_loc - 13))
-        return font
 
     def draw_info(self):
         initial_y_loc = 0
         initial_x_loc = self.current_background.display_width
         pygame.draw.rect(self.current_background.screen, (255, 255, 255), (initial_x_loc, initial_y_loc, 275, 300))
 
-        self.draw_current_generation(initial_x_loc, initial_y_loc)
+        font = pygame.font.SysFont("comicsansms", 14)
+        self.draw_current_generation(initial_x_loc, initial_y_loc, font)
         self.get_best_five_characters()
-        self.draw_best_fitness(initial_x_loc, initial_y_loc + 15)
-        self.draw_neural_net(initial_x_loc, initial_y_loc + 60)
+        self.draw_best_fitness(initial_x_loc, initial_y_loc + 15, font)
+        self.draw_neural_net(initial_x_loc, initial_y_loc + 60, font)
