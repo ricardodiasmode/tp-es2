@@ -150,7 +150,14 @@ class TestCharacter:
     def test_get_closest_enemy_index(self):
         mocked_character = character.Character((0,0), None, False, 0)
         enemies_loc = ([0, 64], [128, 128], [128, 0], [128, 64], [0, 128])
-        found_index = mocked_character.get_closest_enemy_index(enemies_loc)
+        enemies_mocked = [
+            character.Character((0, 0), None, True, 0),
+            character.Character((0, 0), None, True, 0),
+            character.Character((0, 0), None, True, 0),
+            character.Character((0, 0), None, True, 0),
+            character.Character((0, 0), None, True, 0)
+        ]
+        found_index = mocked_character.get_closest_enemy_index(enemies_loc, enemies_mocked)
         assert found_index == 0
 
 
