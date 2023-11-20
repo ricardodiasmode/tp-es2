@@ -22,6 +22,8 @@ class TestGameMode:
         mocked_game_mode.reset_variables()
 
         assert mocked_game_mode.blue_characters == []
+        assert mocked_game_mode.red_characters_locations == []
+        assert mocked_game_mode.blue_characters_locations == []
         assert mocked_game_mode.red_characters == []
         assert mocked_game_mode.current_background is None
         assert mocked_game_mode.current_turn == 0

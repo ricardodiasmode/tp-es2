@@ -30,25 +30,31 @@ class TestGameLoop:
 
     def test_game_loop_no_blue_characters(self):
         self.mocked_game_mode.reset_variables()
-        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False)]
+        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False, 0)]
+        self.mocked_game_mode.red_characters_locations.append((0, 0))
         gameLoops.run_game_loop(self.mocked_game_mode)
 
     def test_game_loop_no_red_characters(self):
         self.mocked_game_mode.reset_variables()
-        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True)]
+        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True, 0)]
+        self.mocked_game_mode.blue_characters_locations.append((0, 0))
         gameLoops.run_game_loop(self.mocked_game_mode)
 
     def test_game_loop_blue_characters_dead(self):
         self.mocked_game_mode.reset_variables()
-        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True)]
+        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True, 0)]
+        self.mocked_game_mode.blue_characters_locations.append((0, 0))
         self.mocked_game_mode.blue_characters[0].die()
-        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False)]
+        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False, 0)]
+        self.mocked_game_mode.red_characters_locations.append((0, 0))
         gameLoops.run_game_loop(self.mocked_game_mode)
 
     def test_game_loop_red_characters_dead(self):
         self.mocked_game_mode.reset_variables()
-        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True)]
-        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False)]
+        self.mocked_game_mode.blue_characters = [character.Character((0, 0), self.mocked_game_mode, True, 0)]
+        self.mocked_game_mode.blue_characters_locations.append((0, 0))
+        self.mocked_game_mode.red_characters = [character.Character((0, 0), self.mocked_game_mode, False, 0)]
+        self.mocked_game_mode.red_characters_locations.append((0, 0))
         self.mocked_game_mode.red_characters[0].die()
         gameLoops.run_game_loop(self.mocked_game_mode)
 

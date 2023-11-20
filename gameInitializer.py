@@ -23,7 +23,7 @@ class GameInitializer:
 
     def run_turn(self):
         self.should_draw_info, self.sleep_time = gameLoops.run_event_loop(self.sleep_time, self.should_draw_info,
-                                                                pygame.event.get(), self.game_mode)
+                                                                          pygame.event.get(), self.game_mode)
         gameLoops.run_game_loop(self.game_mode)
 
         if self.should_draw_info:

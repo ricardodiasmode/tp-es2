@@ -5,9 +5,9 @@ from layer import Layer
 
 INITIAL_WEIGHT_RATE = 1.0
 BIAS = 1
-AMOUNT_ENTRY_NEURON = 4 + BIAS
-AMOUNT_HIDDEN_NEURON = [4 + BIAS]
-AMOUNT_OUT_NEURON = 5
+AMOUNT_ENTRY_NEURON = 6 + BIAS
+AMOUNT_HIDDEN_NEURON = [6 + BIAS]
+AMOUNT_OUT_NEURON = 6
 
 
 def relu(x):
@@ -16,11 +16,14 @@ def relu(x):
 
 def get_entry_params(character, gamemode):
     (log_x_dist, log_y_dist) = utils.get_closest_log_dist(character.current_location, gamemode.current_background)
+    (enemy_x_dist, enemy_y_dist) = utils.get_closest_enemy_dist(character, gamemode)
     return [
         log_x_dist > 0,
         log_x_dist == 0,
         log_y_dist > 0,
-        log_y_dist == 0
+        log_y_dist == 0,
+        abs(enemy_x_dist) <= 64 and abs(enemy_y_dist) <= 64,  # is side by side of an enemy
+        character.has_knife
     ]
 
 

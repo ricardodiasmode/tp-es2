@@ -6,13 +6,15 @@ import character
 
 
 class GameMode:
-    number_of_character_each_team = 10
+    number_of_character_each_team = 5
     generations_to_accept_convergence = 10000
 
     current_generation = 0
     game_is_running = True
     blue_characters = []
     red_characters = []
+    blue_characters_locations = []
+    red_characters_locations = []
     current_background = None
     number_of_mutations = 0
     current_turn = 0
@@ -26,6 +28,8 @@ class GameMode:
     def reset_variables(self):
         self.blue_characters = []
         self.red_characters = []
+        self.blue_characters_locations = []
+        self.red_characters_locations = []
         self.current_background = None
         self.current_turn = 0
 
@@ -82,12 +86,14 @@ class GameMode:
             initial_loc = self.generate_random_location()
             while self.has_character_at_location(initial_loc):
                 initial_loc = self.generate_random_location()
-            self.blue_characters.append(character.Character(initial_loc, self, True))
+            self.blue_characters.append(character.Character(initial_loc, self, True, i))
+            self.blue_characters_locations.append(initial_loc)
 
             initial_loc = self.generate_random_location()
             while self.has_character_at_location(initial_loc):
                 initial_loc = self.generate_random_location()
-            self.red_characters.append(character.Character(initial_loc, self, False))
+            self.red_characters.append(character.Character(initial_loc, self, False, i))
+            self.red_characters_locations.append(initial_loc)
 
         if self.current_generation == 0:
             self.number_of_mutations = len(self.blue_characters[0].dna)
@@ -284,3 +290,8 @@ class GameMode:
         self.get_best_five_characters()
         self.draw_best_fitness(initial_x_loc, initial_y_loc + 15, font)
         self.draw_neural_net(initial_x_loc, initial_y_loc + 60, font)
+
+    def get_characters_loc(self, blue_team_characters):
+        if blue_team_characters:
+            return self.blue_characters_locations
+        return self.red_characters_locations

@@ -18,3 +18,25 @@ def get_closest_log_dist(character_loc, background):
 def distance_between_locations(first_loc, second_loc):
     return math.sqrt((first_loc[0] - second_loc[0]) ** 2 + (
             first_loc[1] - second_loc[1]) ** 2)
+
+
+def get_closest_enemy_dist(current_character, current_game_mode):
+    if current_game_mode is None:
+        return 0, 0
+
+    closest_enemy_index = -1
+    closest_dist = 999999
+
+    enemies = current_game_mode.red_characters if current_character.blue_team_member else current_game_mode.blue_characters
+
+    for i in range(len(enemies)):
+        current_dist = distance_between_locations(enemies[i].current_location, current_character.current_location)
+        if closest_dist > current_dist:
+            closest_dist = current_dist
+            closest_enemy_index = i
+
+    if closest_enemy_index == -1:
+        return 0, 0
+
+    found_loc = enemies[closest_enemy_index].current_location
+    return found_loc[0] - current_character.current_location[0], found_loc[1] - current_character.current_location[1]

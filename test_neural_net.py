@@ -11,11 +11,11 @@ class TestNeuralNet:
     def test_neurons_initialization(self):
         neural_network = neuralNetwork.NeuralNetwork()
         assert len(neural_network.entry_layer.neurons) == neuralNetwork.AMOUNT_ENTRY_NEURON
-        for current_hidden_layer in neural_network.hidden_layers:
-            assert len(current_hidden_layer.neurons) == neuralNetwork.AMOUNT_ENTRY_NEURON
+        for i in range(len(neural_network.hidden_layers)):
+            assert len(neural_network.hidden_layers[i].neurons) == neuralNetwork.AMOUNT_HIDDEN_NEURON[i]
         assert len(neural_network.out_layer.neurons) == neuralNetwork.AMOUNT_OUT_NEURON
 
     def test_weights_initialization(self):
         neural_network = neuralNetwork.NeuralNetwork()
         assert len(neural_network.entry_layer.neurons) == len(neural_network.hidden_layers[0].neurons[0].weights)
-        assert len(neural_network.out_layer.neurons) == len(neural_network.hidden_layers[0].neurons[0].weights)
+        assert len(neural_network.out_layer.neurons) == len(neural_network.hidden_layers[0].neurons[0].weights) - 1
