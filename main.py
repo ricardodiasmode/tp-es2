@@ -1,3 +1,5 @@
+# This is a ML project for study purposes
+
 import gameInitializer
 
 game_initializer = gameInitializer.GameInitializer()
