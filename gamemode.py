@@ -106,9 +106,10 @@ class GameMode:
 
     def clone_best_characters(self):
         for i in range(len(self.blue_characters)):
-            if i < len(self.best_characters_in_turn):
-                self.blue_characters[i].dna = self.best_characters_in_turn[i].dna
-                self.red_characters[i].dna = self.best_characters_in_turn[i].dna
+            if i >= len(self.best_characters_in_turn):
+                break
+            self.blue_characters[i].dna = self.best_characters_in_turn[i].dna
+            self.red_characters[i].dna = self.best_characters_in_turn[i].dna
 
     def mutate_characters(self):
         for i in range(len(self.best_characters_in_turn), len(self.blue_characters)):
@@ -188,9 +189,9 @@ class GameMode:
                          initial_y_loc):
         for i in range(len(best_character_brain.entry_layer.neurons) - bias):
             for j in range(len(best_character_brain.hidden_layers[0].neurons) - bias):
-                if best_character_brain.entry_layer.neurons[i].OutValue > 0 and \
+                if best_character_brain.entry_layer.neurons[i].out_value > 0 and \
                         best_character_brain.hidden_layers[0].neurons[
-                            j].OutValue > 0:
+                            j].out_value > 0:
                     pygame.draw.line(self.current_background.screen, neuron_active_color,
                                      (initial_x_loc + 50, initial_y_loc + i * each_neuron_offset),
                                      (initial_x_loc + 100, initial_y_loc + j * each_neuron_offset), 1)
@@ -201,7 +202,7 @@ class GameMode:
         if len(best_character_brain.hidden_layers) > 1:
             for i in range(len(best_character_brain.hidden_layers[0].neurons) - bias):
                 for j in range(len(best_character_brain.hidden_layers[1].neurons) - bias):
-                    if best_character_brain.hidden_layers[0].neurons[i].OutValue > 0:
+                    if best_character_brain.hidden_layers[0].neurons[i].out_value > 0:
                         pygame.draw.line(self.current_background.screen, neuron_active_color,
                                          (initial_x_loc + 100, initial_y_loc + i * each_neuron_offset),
                                          (initial_x_loc + 150, initial_y_loc + j * each_neuron_offset), 1)
@@ -211,7 +212,7 @@ class GameMode:
                                          (initial_x_loc + 150, initial_y_loc + j * each_neuron_offset), 1)
         for i in range(len(best_character_brain.hidden_layers[-1].neurons) - bias):
             for j in range(len(best_character_brain.last_calculated_output)):
-                if best_character_brain.hidden_layers[-1].neurons[i].OutValue > 0 and \
+                if best_character_brain.hidden_layers[-1].neurons[i].out_value > 0 and \
                         best_character_brain.last_calculated_output[j] != 0:
                     pygame.draw.line(self.current_background.screen, neuron_active_color,
                                      (initial_x_loc + 100, initial_y_loc + i * each_neuron_offset),
@@ -250,7 +251,7 @@ class GameMode:
         for i in range(len(best_character_brain.hidden_layers)):
             for j in range(len(best_character_brain.hidden_layers[i].neurons) - bias):
                 neuron_color = (0, 0, 0) if best_character_brain.hidden_layers[i].neurons[
-                                               j].OutValue == 0 else neuron_active_color
+                                               j].out_value == 0 else neuron_active_color
                 pygame.draw.circle(self.current_background.screen, neuron_color,
                                    (initial_x_loc + 100 + i * 50, initial_y_loc + j * each_neuron_offset),
                                    7)
@@ -258,7 +259,7 @@ class GameMode:
     def draw_first_layer_neurons(self, bias, best_character_brain, each_neuron_offset, neuron_active_color, initial_x_loc,
                                  initial_y_loc):
         for i in range(len(best_character_brain.entry_layer.neurons) - bias):
-            neuron_color = (0, 0, 0) if best_character_brain.entry_layer.neurons[i].OutValue == 0 else neuron_active_color
+            neuron_color = (0, 0, 0) if best_character_brain.entry_layer.neurons[i].out_value == 0 else neuron_active_color
             pygame.draw.circle(self.current_background.screen, neuron_color,
                                (initial_x_loc + 50, initial_y_loc + i * each_neuron_offset),
                                7)

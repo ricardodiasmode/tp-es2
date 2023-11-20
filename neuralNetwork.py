@@ -25,9 +25,9 @@ def get_entry_params(character, gamemode):
 
 
 class NeuralNetwork:
-    entry_layer = []
+    entry_layer = None
     hidden_layer = []
-    out_layer = []
+    out_layer = None
 
     last_calculated_output = []
 
@@ -44,22 +44,22 @@ class NeuralNetwork:
             for j in range(len(self.hidden_layers[i].neurons)):
                 if i == 0:
                     for k in range(len(self.entry_layer.neurons)):
-                        self.hidden_layers[i].neurons[j].Weights.append(
+                        self.hidden_layers[i].neurons[j].weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
                 elif i == len(self.hidden_layers) - 1:
                     for k in range(len(self.out_layer.neurons)):
-                        self.hidden_layers[i].neurons[j].Weights.append(
+                        self.hidden_layers[i].neurons[j].weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
                 else:
                     for k in range(len(self.hidden_layers[i + 1].neurons)):
-                        self.hidden_layers[i].neurons[j].Weights.append(
+                        self.hidden_layers[i].neurons[j].weights.append(
                             random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
         for j in range(len(self.out_layer.neurons)):
             for k in range(len(self.hidden_layers[-1].neurons)):
-                self.out_layer.neurons[j].Weights.append(
+                self.out_layer.neurons[j].weights.append(
                     random.uniform(-INITIAL_WEIGHT_RATE, INITIAL_WEIGHT_RATE))
 
-    def Think(self, character, gamemode):
+    def think(self, character, gamemode):
         self.feed_entry_layer(character, gamemode)
         self.calculate_weights()
         self.last_calculated_output = self.get_output()
@@ -67,7 +67,7 @@ class NeuralNetwork:
     def feed_entry_layer(self, character, gamemode):
         entry_params = get_entry_params(character, gamemode)
         for i in range(len(self.entry_layer.neurons) - BIAS):
-            self.entry_layer.neurons[i].OutValue = int(entry_params[i])
+            self.entry_layer.neurons[i].out_value = int(entry_params[i])
 
     def calculate_weights(self):
         self.calculate_first_hidden_layer_weights()
@@ -76,33 +76,33 @@ class NeuralNetwork:
 
     def calculate_out_layer_weights(self):
         for j in range(len(self.out_layer.neurons)):
-            sum = 0
-            for k in range(len(self.out_layer.neurons[j].Weights)):
-                sum += self.out_layer.neurons[j].Weights[k] * self.hidden_layers[-1].neurons[k].OutValue
-            self.out_layer.neurons[j].OutValue = relu(sum)
+            weights_sum = 0
+            for k in range(len(self.out_layer.neurons[j].weights)):
+                weights_sum += self.out_layer.neurons[j].weights[k] * self.hidden_layers[-1].neurons[k].out_value
+            self.out_layer.neurons[j].out_value = relu(weights_sum)
 
     def calculate_hidden_layers_weights(self):
         for i in range(1, len(self.hidden_layers)):
             for j in range(len(self.hidden_layers[i].neurons)):
-                sum = 0
-                for k in range(len(self.hidden_layers[i].neurons[j].Weights)):
-                    sum += self.hidden_layers[i].neurons[j].Weights[k] * self.hidden_layers[i - 1].neurons[k].OutValue
-                self.hidden_layers[i].neurons[j].OutValue = relu(sum)
+                weights_sum = 0
+                for k in range(len(self.hidden_layers[i].neurons[j].weights)):
+                    weights_sum += self.hidden_layers[i].neurons[j].weights[k] * self.hidden_layers[i - 1].neurons[k].out_value
+                self.hidden_layers[i].neurons[j].out_value = relu(weights_sum)
 
     def calculate_first_hidden_layer_weights(self):
         for j in range(len(self.hidden_layers[0].neurons)):
-            sum = 0
-            for k in range(len(self.hidden_layers[0].neurons[j].Weights)):
-                hidden_layer_weight = self.hidden_layers[0].neurons[j].Weights[k]
-                input_value = self.entry_layer.neurons[k].OutValue
-                sum = sum + hidden_layer_weight * input_value
-            self.hidden_layers[0].neurons[j].OutValue = relu(sum)
+            weights_sum = 0
+            for k in range(len(self.hidden_layers[0].neurons[j].weights)):
+                hidden_layer_weight = self.hidden_layers[0].neurons[j].weights[k]
+                input_value = self.entry_layer.neurons[k].out_value
+                weights_sum = weights_sum + hidden_layer_weight * input_value
+            self.hidden_layers[0].neurons[j].out_value = relu(weights_sum)
 
     def get_output(self):
         greater_out_value_index = -1
         output = []
         for i in range(len(self.out_layer.neurons)):
-            if self.out_layer.neurons[i].OutValue > self.out_layer.neurons[greater_out_value_index].OutValue:
+            if self.out_layer.neurons[i].out_value > self.out_layer.neurons[greater_out_value_index].out_value:
                 greater_out_value_index = i
         for i in range(len(self.out_layer.neurons)):
             if i != greater_out_value_index:
@@ -114,11 +114,11 @@ class NeuralNetwork:
         return output
 
     def get_weight_amount(self):
-        sum = 0
+        weights_sum = 0
         for i in range(len(self.hidden_layers)):
             for j in range(len(self.hidden_layers[i].neurons)):
-                sum += len(self.hidden_layers[i].neurons[j].Weights)
+                weights_sum += len(self.hidden_layers[i].neurons[j].weights)
 
         for j in range(len(self.out_layer.neurons)):
-            sum += len(self.out_layer.neurons[j].Weights)
-        return sum
+            weights_sum += len(self.out_layer.neurons[j].weights)
+        return weights_sum

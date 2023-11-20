@@ -1,2 +1,0 @@
-Extração de métodos: https://github.com/ricardodiasmode/tp-es2/commit/c9f488fa98cdf341d9319cbb84212079bef70c1c
-Renomeando variaveis e métodos para as convensões de python: https://github.com/ricardodiasmode/tp-es2/commit/80fa914705a2a7eb2b3e9784ec69f951f664b0f5

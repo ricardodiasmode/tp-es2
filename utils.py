@@ -2,6 +2,9 @@ import math
 
 
 def get_closest_log_dist(character_loc, background):
+    if background is None:
+        return 0, 0
+
     closest_log_index = 0
     closest_dist = 999999
     for i in range(len(background.log_locations)):

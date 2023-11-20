@@ -1,6 +1,6 @@
 class Neuron:
-    def __init__(self, connection_amount):
-        self.Weights = []
-        self.Error = 0.0
-        self.OutValue = 1.0
-        self.ConnectionAmount = connection_amount
+    def __init__(self, in_connection_amount):
+        self.weights = []
+        self.error = 0.0
+        self.out_value = 1.0
+        self.connection_amount = in_connection_amount
