@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
     - name: Checkout code
@@ -30,7 +30,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         pip install pygame
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install dependencies on Linux
+      if: runner.os != 'Windows'
+      run: |
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
+    - name: Install dependencies on Windows
+      if: runner.os == 'Windows'
+      run: |
+        cmd /c "if exist requirements.txt pip install -r requirements.txt"
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
